@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
+    /* (mesmo CSS anterior) */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
       --azul-escuro: #1A5276;
@@ -316,6 +317,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
   msg.innerHTML = '⏳ Enviando dados...';
 
   try {
+    // 1. Criar usuário
     const userRes = await fetch(`${API_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -332,12 +334,22 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
       return;
     }
 
+    // 2. Cadastrar perfil do funcionário
     const funcRes = await fetch(`${API_URL}/api/funcionarios/public`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        userId: userData.user.id, nomeCompleto: nome, idade, telefone,
-        profissao, experiencia, homecare, disponibilidadeTempo, servicos, fimSemana, experienciaTexto,
+        userId: userData.user.id,
+        nomeCompleto: nome,
+        idade,
+        telefone,
+        profissao,
+        experiencia,
+        homecare,
+        disponibilidadeTempo,
+        servicos,
+        fimSemana,
+        experienciaTexto,
         especialidade: profissao,
         descricao: `${profissao} | ${experiencia}`
       })
@@ -351,7 +363,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
       return;
     }
 
-    // Login automático
+    // 3. Login automático
     const loginRes = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -363,10 +375,11 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
       localStorage.setItem('token', loginData.token);
       localStorage.setItem('user', JSON.stringify(loginData.user));
       msg.className = 'sucesso';
-      msg.innerHTML = '✅ Cadastro e login realizados com sucesso!';
+      msg.innerHTML = '✅ Cadastro e login realizados com sucesso! Redirecionando...';
+      
+      // 🔥 REDIRECIONAMENTO PARA O DASHBOARD (MESMO DIRETÓRIO)
       setTimeout(() => {
-        // 🔥 REDIRECIONA PARA LOGIN (EVITA 404)
-        window.location.href = 'login-funcionario.html';
+        window.location.href = 'dashboard-funcionario.html';
       }, 1500);
     } else {
       msg.className = 'sucesso';
