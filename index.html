@@ -7,13 +7,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    /* (mesmo CSS anterior) */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
       --azul-escuro: #1A5276;
       --azul-medio: #2980B9;
       --azul-claro: #5DADE2;
       --verde-principal: #2E7D32;
+      --verde-claro: #A5D6A7;
       --branco: #FFFFFF;
       --cinza-claro: #F5F7FA;
       --cinza-borda: #E0E4E8;
@@ -52,6 +52,8 @@
     }
     .logo-text .destaque { color: var(--azul-claro); }
     .logo-text small { font-size: 0.6rem; color: #B0C4D0; }
+    
+    /* ===== FORMULÁRIO ===== */
     .register-box {
       max-width: 600px;
       margin: 40px auto;
@@ -158,6 +160,52 @@
     #cadastroMensagem.sucesso { background: #eafaf1; color: #27ae60; }
     #cadastroMensagem.erro { background: #fdedec; color: #e74c3c; }
     #cadastroMensagem.carregando { background: #ebf5fb; color: #2980b9; }
+
+    /* ===== MENSAGEM DE BOAS-VINDAS (exibida após cadastro) ===== */
+    #welcomeArea {
+      display: none;
+      text-align: center;
+      padding: 30px 20px;
+    }
+    #welcomeArea .welcome-icon {
+      font-size: 4rem;
+      color: var(--verde-principal);
+    }
+    #welcomeArea .welcome-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--verde-principal);
+      margin: 16px 0;
+    }
+    #welcomeArea .welcome-sub {
+      font-size: 1.2rem;
+      color: var(--cinza-claro-texto);
+    }
+    #welcomeArea .welcome-box {
+      background: linear-gradient(135deg, #eafaf1, #d5f5e3);
+      border: 3px solid var(--verde-claro);
+      border-radius: var(--border-radius);
+      padding: 30px;
+      margin-top: 20px;
+      box-shadow: 0 4px 12px rgba(46,125,50,0.15);
+    }
+    #welcomeArea .btn-ir-login {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 30px;
+      background: var(--azul-medio);
+      color: var(--branco);
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    #welcomeArea .btn-ir-login:hover {
+      background: var(--azul-escuro);
+    }
+
     footer {
       margin-top: auto;
       background: #0A1E2F;
@@ -187,7 +235,8 @@
 
 <section style="flex:1; padding: 20px 0 40px;">
   <div class="container">
-    <div class="register-box">
+    <!-- ===== FORMULÁRIO ===== -->
+    <div id="formArea" class="register-box">
       <h2>📝 Formulário do Funcionário</h2>
       <p class="subtitle">Preencha seus dados para se cadastrar</p>
       <form id="cadastroFuncionarioForm">
@@ -271,6 +320,27 @@
       </form>
       <div class="link-login">
         <a href="login-funcionario.html">← Já tem conta? Faça login</a>
+      </div>
+    </div>
+
+    <!-- ===== ÁREA DE BOAS-VINDAS (exibida após cadastro) ===== -->
+    <div id="welcomeArea" class="register-box">
+      <div class="welcome-icon">
+        <i class="fas fa-hand-peace"></i>
+      </div>
+      <div class="welcome-title">
+        Bem-vindo ao Cuidado Humanizado Batista!
+      </div>
+      <div class="welcome-box">
+        <p style="font-size: 1.1rem; color: #1A5276; font-weight: 600;">
+          Seu cadastro foi realizado com sucesso!
+        </p>
+        <p style="color: var(--cinza-claro-texto); margin-top: 8px;">
+          Você já pode fazer login e acessar sua área pessoal.
+        </p>
+        <a href="login-funcionario.html" class="btn-ir-login">
+          <i class="fas fa-sign-in-alt"></i> Ir para o login
+        </a>
       </div>
     </div>
   </div>
@@ -363,31 +433,26 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
       return;
     }
 
-    // 3. Login automático
-    const loginRes = await fetch(`${API_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password: senha })
-    });
-    const loginData = await loginRes.json();
-
-    if (loginRes.ok) {
-      localStorage.setItem('token', loginData.token);
-      localStorage.setItem('user', JSON.stringify(loginData.user));
-      msg.className = 'sucesso';
-      msg.innerHTML = '✅ Cadastro e login realizados com sucesso! Redirecionando...';
-      
-      // 🔥 REDIRECIONAMENTO PARA O DASHBOARD (MESMO DIRETÓRIO)
-      setTimeout(() => {
-        window.location.href = 'dashboard-funcionario.html';
-      }, 1500);
-    } else {
-      msg.className = 'sucesso';
-      msg.innerHTML = '✅ Cadastro realizado! Faça login para acessar sua área.';
-      setTimeout(() => {
-        window.location.href = 'login-funcionario.html';
-      }, 2000);
+    // 3. Login automático (opcional, para já deixar logado)
+    try {
+      const loginRes = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: senha })
+      });
+      if (loginRes.ok) {
+        const loginData = await loginRes.json();
+        localStorage.setItem('token', loginData.token);
+        localStorage.setItem('user', JSON.stringify(loginData.user));
+      }
+    } catch (loginErr) {
+      // Ignora erro de login automático – o usuário pode logar manualmente depois
+      console.warn('Login automático não foi possível:', loginErr);
     }
+
+    // 🔥 SUCESSO: esconde formulário e mostra mensagem de boas-vindas
+    document.getElementById('formArea').style.display = 'none';
+    document.getElementById('welcomeArea').style.display = 'block';
 
   } catch (err) {
     console.error('Erro:', err);
