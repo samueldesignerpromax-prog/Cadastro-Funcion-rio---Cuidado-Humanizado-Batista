@@ -7,11 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
       --azul-escuro: #1A5276;
       --azul-medio: #2980B9;
@@ -24,11 +20,10 @@
       --cinza-claro-texto: #7A7A7A;
       --sombra: 0 8px 24px rgba(0,0,0,0.08);
       --border-radius: 16px;
-      --transition: 0.3s ease;
     }
     body {
       font-family: 'Inter', sans-serif;
-      background-color: var(--cinza-claro);
+      background: var(--cinza-claro);
       color: var(--cinza-texto);
       min-height: 100vh;
       display: flex;
@@ -40,11 +35,7 @@
       padding: 12px 0;
       box-shadow: 0 2px 12px rgba(0,0,0,0.15);
     }
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .navbar { display: flex; justify-content: space-between; align-items: center; }
     .logo-img {
       display: flex;
       align-items: center;
@@ -105,10 +96,7 @@
       outline: none;
       box-shadow: 0 0 0 3px rgba(41,128,185,0.15);
     }
-    .register-box .form-group textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
+    .register-box .form-group textarea { resize: vertical; min-height: 80px; }
     .register-box .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -137,7 +125,7 @@
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: var(--transition);
+      transition: 0.3s;
     }
     .register-box .btn-cadastrar:hover {
       background: #1B5E20;
@@ -180,7 +168,6 @@
     @media (max-width: 600px) {
       .register-box { margin: 20px 16px; padding: 24px; }
       .register-box .form-row { grid-template-columns: 1fr; }
-      .register-box .radio-group { gap: 12px; }
     }
   </style>
 </head>
@@ -203,13 +190,10 @@
       <h2>📝 Formulário do Funcionário</h2>
       <p class="subtitle">Preencha seus dados para se cadastrar</p>
       <form id="cadastroFuncionarioForm">
-        <!-- Nome completo -->
         <div class="form-group">
           <label>Nome completo *</label>
           <input type="text" id="funcNome" placeholder="Seu nome completo" required>
         </div>
-
-        <!-- Idade e Telefone -->
         <div class="form-row">
           <div class="form-group">
             <label>Idade *</label>
@@ -220,8 +204,6 @@
             <input type="text" id="funcTelefone" placeholder="(11) 99999-9999" required>
           </div>
         </div>
-
-        <!-- E-mail e Senha -->
         <div class="form-row">
           <div class="form-group">
             <label>E-mail (login) *</label>
@@ -232,8 +214,6 @@
             <input type="password" id="funcSenha" placeholder="********" required>
           </div>
         </div>
-
-        <!-- Profissão -->
         <div class="form-group">
           <label>Profissão *</label>
           <select id="funcProfissao" required>
@@ -247,14 +227,10 @@
             <option value="Outro">Outro</option>
           </select>
         </div>
-
-        <!-- Tempo de experiência -->
         <div class="form-group">
           <label>Tempo de experiência na profissão *</label>
           <input type="text" id="funcExperiencia" placeholder="Ex: 3 anos e meio" required>
         </div>
-
-        <!-- Já trabalhou com Home Care? -->
         <div class="form-group">
           <label>Já trabalhou com Home Care? *</label>
           <div class="radio-group">
@@ -262,8 +238,6 @@
             <label><input type="radio" name="homecare" value="Não"> Não</label>
           </div>
         </div>
-
-        <!-- Quanto tempo pode trabalhar? -->
         <div class="form-group">
           <label>Quanto tempo pode trabalhar? *</label>
           <select id="funcDisponibilidadeTempo" required>
@@ -274,14 +248,10 @@
             <option value="Plantão">Plantão</option>
           </select>
         </div>
-
-        <!-- Quais serviços sabe realizar? -->
         <div class="form-group">
           <label>Quais serviços sabe realizar?</label>
-          <textarea id="funcServicos" placeholder="Ex: cuidados de higiene, administração de medicamentos, fisioterapia..."></textarea>
+          <textarea id="funcServicos" placeholder="Ex: cuidados de higiene, administração de medicamentos..."></textarea>
         </div>
-
-        <!-- Disponibilidade para finais de semana? -->
         <div class="form-group">
           <label>Tem disponibilidade para finais de semana? *</label>
           <div class="radio-group">
@@ -289,13 +259,10 @@
             <label><input type="radio" name="fimSemana" value="Não"> Não</label>
           </div>
         </div>
-
-        <!-- Experiência profissional (texto livre) -->
         <div class="form-group">
           <label>Conte brevemente sobre sua experiência profissional *</label>
-          <textarea id="funcExperienciaTexto" placeholder="Descreva sua trajetória, principais habilidades e motivações..." required></textarea>
+          <textarea id="funcExperienciaTexto" placeholder="Descreva sua trajetória..." required></textarea>
         </div>
-
         <button type="submit" class="btn-cadastrar" id="btnCadastrar">
           <i class="fas fa-user-plus"></i> Cadastrar
         </button>
@@ -349,19 +316,14 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
   msg.innerHTML = '⏳ Enviando dados...';
 
   try {
-    // PASSO 1: Criar o usuário
     const userRes = await fetch(`${API_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name: nome,
-        email: email,
-        password: senha,
-        role: 'funcionario'
+        name: nome, email, password: senha, role: 'funcionario'
       })
     });
     const userData = await userRes.json();
-
     if (!userRes.ok) {
       msg.className = 'erro';
       msg.innerHTML = `❌ ${userData.message || userData.error}`;
@@ -370,29 +332,17 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
       return;
     }
 
-    // PASSO 2: Cadastrar informações do funcionário (rota pública)
     const funcRes = await fetch(`${API_URL}/api/funcionarios/public`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        userId: userData.user.id,
-        nomeCompleto: nome,
-        idade: idade,
-        telefone: telefone,
-        profissao: profissao,
-        experiencia: experiencia,
-        homecare: homecare,
-        disponibilidadeTempo: disponibilidadeTempo,
-        servicos: servicos,
-        fimSemana: fimSemana,
-        experienciaTexto: experienciaTexto,
-        // Mantém compatibilidade com campos antigos
+        userId: userData.user.id, nomeCompleto: nome, idade, telefone,
+        profissao, experiencia, homecare, disponibilidadeTempo, servicos, fimSemana, experienciaTexto,
         especialidade: profissao,
-        descricao: `${profissao} | ${experiencia} | ${experienciaTexto.slice(0, 100)}`
+        descricao: `${profissao} | ${experiencia}`
       })
     });
     const funcData = await funcRes.json();
-
     if (!funcRes.ok) {
       msg.className = 'erro';
       msg.innerHTML = `❌ ${funcData.message || funcData.error}`;
@@ -401,8 +351,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
       return;
     }
 
-    // PASSO 3: Login automático
-    msg.innerHTML = '✅ Cadastro realizado! Redirecionando...';
+    // Login automático
     const loginRes = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -416,7 +365,8 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
       msg.className = 'sucesso';
       msg.innerHTML = '✅ Cadastro e login realizados com sucesso!';
       setTimeout(() => {
-        window.location.href = 'dashboard-funcionario.html';
+        // 🔥 REDIRECIONA PARA LOGIN (EVITA 404)
+        window.location.href = 'login-funcionario.html';
       }, 1500);
     } else {
       msg.className = 'sucesso';
