@@ -7,181 +7,332 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    :root {
+      --azul-escuro: #1A5276;
+      --azul-medio: #2980B9;
+      --azul-claro: #5DADE2;
+      --verde-principal: #2E7D32;
+      --branco: #FFFFFF;
+      --cinza-claro: #F5F7FA;
+      --cinza-borda: #E0E4E8;
+      --cinza-texto: #4A4A4A;
+      --cinza-claro-texto: #7A7A7A;
+      --sombra: 0 8px 24px rgba(0,0,0,0.08);
+      --border-radius: 16px;
+      --transition: 0.3s ease;
+    }
     body {
       font-family: 'Inter', sans-serif;
-      background: #f5f7fa;
+      background-color: var(--cinza-claro);
+      color: var(--cinza-texto);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; width: 100%; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
     header {
-      background: #1A5276;
-      padding: 15px 20px;
-      color: white;
+      background: linear-gradient(135deg, var(--azul-escuro), #0E3B5E);
+      padding: 12px 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo-img {
       display: flex;
       align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .logo-img img { height: 40px; width: auto; }
+    .logo-text {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--branco);
+      line-height: 1.2;
+    }
+    .logo-text .destaque { color: var(--azul-claro); }
+    .logo-text small { font-size: 0.6rem; color: #B0C4D0; }
+    .register-box {
+      max-width: 600px;
+      margin: 40px auto;
+      background: var(--branco);
+      padding: 40px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--sombra);
+    }
+    .register-box h2 {
+      color: var(--azul-escuro);
+      text-align: center;
+      font-size: 1.6rem;
+    }
+    .register-box .subtitle {
+      text-align: center;
+      color: var(--cinza-claro-texto);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+    .register-box .form-group { margin-bottom: 16px; }
+    .register-box .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--azul-escuro);
+      font-size: 0.9rem;
+    }
+    .register-box .form-group input,
+    .register-box .form-group textarea,
+    .register-box .form-group select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--cinza-borda);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: var(--branco);
+    }
+    .register-box .form-group input:focus,
+    .register-box .form-group textarea:focus,
+    .register-box .form-group select:focus {
+      border-color: var(--azul-medio);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(41,128,185,0.15);
+    }
+    .register-box .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .register-box .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
-    header img { height: 40px; }
-    header h1 { font-size: 1.2rem; font-weight: 700; }
-    header h1 span { color: #5DADE2; }
-    header small { font-size: 0.6rem; color: #B0C4D0; display: block; }
-    .register-box {
-      background: white;
-      border-radius: 16px;
-      padding: 30px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-      margin-top: 30px;
+    .register-box .radio-group {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 4px;
     }
-    .register-box h2 { color: #1A5276; text-align: center; margin-bottom: 4px; }
-    .register-box .subtitle { text-align: center; color: #888; font-size: 0.9rem; margin-bottom: 20px; }
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-weight: 600; margin-bottom: 4px; color: #1A5276; font-size: 0.9rem; }
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; font-family: inherit;
+    .register-box .radio-group label {
+      font-weight: 400;
+      color: var(--cinza-texto);
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      border-color: #2980B9; outline: none; box-shadow: 0 0 0 3px rgba(41,128,185,0.15);
+    .register-box .btn-cadastrar {
+      width: 100%;
+      padding: 12px;
+      background: var(--verde-principal);
+      color: var(--branco);
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
     }
-    .form-group textarea { resize: vertical; min-height: 80px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .radio-group { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 4px; }
-    .radio-group label { font-weight: 400; display: flex; align-items: center; gap: 4px; }
-    .btn-cadastrar {
-      width: 100%; padding: 12px; background: #2E7D32; color: white; border: none; border-radius: 30px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s;
+    .register-box .btn-cadastrar:hover {
+      background: #1B5E20;
+      transform: translateY(-2px);
     }
-    .btn-cadastrar:hover { background: #1B5E20; transform: translateY(-2px); }
-    .btn-cadastrar:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-    .link-login { text-align: center; margin-top: 16px; font-size: 0.85rem; color: #888; }
-    .link-login a { color: #2980B9; text-decoration: none; font-weight: 600; }
-    #cadastroMensagem { margin-top: 12px; text-align: center; font-weight: 600; padding: 10px; border-radius: 8px; }
+    .register-box .btn-cadastrar:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .register-box .link-login {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: var(--cinza-claro-texto);
+    }
+    .register-box .link-login a {
+      color: var(--azul-medio);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    #cadastroMensagem {
+      margin-top: 12px;
+      text-align: center;
+      font-weight: 600;
+      padding: 10px;
+      border-radius: 8px;
+    }
     #cadastroMensagem.sucesso { background: #eafaf1; color: #27ae60; }
     #cadastroMensagem.erro { background: #fdedec; color: #e74c3c; }
     #cadastroMensagem.carregando { background: #ebf5fb; color: #2980b9; }
-    footer { margin-top: auto; background: #0A1E2F; color: white; padding: 15px; text-align: center; font-size: 0.85rem; }
-    @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+    footer {
+      margin-top: auto;
+      background: #0A1E2F;
+      color: var(--branco);
+      padding: 20px 0;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+    @media (max-width: 600px) {
+      .register-box { margin: 20px 16px; padding: 24px; }
+      .register-box .form-row { grid-template-columns: 1fr; }
+      .register-box .radio-group { gap: 12px; }
+    }
   </style>
 </head>
 <body>
 
 <header>
-  <img src="https://i.postimg.cc/44HtyBF7/eb74c209-2d52-4f7a-a0ee-88cc4ad9f9d8.jpg" alt="Logo">
-  <div>
-    <h1>CUIDADO <span>HUMANIZADO</span></h1>
-    <small>BATISTA</small>
+  <div class="container">
+    <nav class="navbar">
+      <a href="#" class="logo-img">
+        <img src="https://i.postimg.cc/44HtyBF7/eb74c209-2d52-4f7a-a0ee-88cc4ad9f9d8.jpg" alt="Cuidado Humanizado Batista">
+        <span class="logo-text">CUIDADO<br><span class="destaque">HUMANIZADO</span><br><small>BATISTA</small></span>
+      </a>
+    </nav>
   </div>
 </header>
 
-<div class="container">
-  <div class="register-box">
-    <h2>📝 Formulário do Funcionário</h2>
-    <p class="subtitle">Preencha seus dados para se cadastrar</p>
-    <form id="cadastroForm">
-      <div class="form-group">
-        <label>Nome completo *</label>
-        <input type="text" id="nome" placeholder="Seu nome completo" required>
-      </div>
-      <div class="form-row">
+<section style="flex:1; padding: 20px 0 40px;">
+  <div class="container">
+    <div class="register-box">
+      <h2>📝 Formulário do Funcionário</h2>
+      <p class="subtitle">Preencha seus dados para se cadastrar</p>
+      <form id="cadastroFuncionarioForm">
+        <!-- Nome completo -->
         <div class="form-group">
-          <label>Idade *</label>
-          <input type="number" id="idade" placeholder="25" required>
+          <label>Nome completo *</label>
+          <input type="text" id="funcNome" placeholder="Seu nome completo" required>
         </div>
+
+        <!-- Idade e Telefone -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Idade *</label>
+            <input type="number" id="funcIdade" placeholder="25" required>
+          </div>
+          <div class="form-group">
+            <label>Telefone/WhatsApp *</label>
+            <input type="text" id="funcTelefone" placeholder="(11) 99999-9999" required>
+          </div>
+        </div>
+
+        <!-- E-mail e Senha -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>E-mail (login) *</label>
+            <input type="email" id="funcEmail" placeholder="seu@email.com" required>
+          </div>
+          <div class="form-group">
+            <label>Senha *</label>
+            <input type="password" id="funcSenha" placeholder="********" required>
+          </div>
+        </div>
+
+        <!-- Profissão -->
         <div class="form-group">
-          <label>Telefone/WhatsApp *</label>
-          <input type="text" id="telefone" placeholder="(11) 99999-9999" required>
+          <label>Profissão *</label>
+          <select id="funcProfissao" required>
+            <option value="">Selecione...</option>
+            <option value="Enfermeiro(a)">Enfermeiro(a)</option>
+            <option value="Técnico(a) de enfermagem">Técnico(a) de enfermagem</option>
+            <option value="Cuidador(a) de idosos">Cuidador(a) de idosos</option>
+            <option value="Fisioterapeuta">Fisioterapeuta</option>
+            <option value="Nutricionista">Nutricionista</option>
+            <option value="Médico(a)">Médico(a)</option>
+            <option value="Outro">Outro</option>
+          </select>
         </div>
-      </div>
-      <div class="form-row">
+
+        <!-- Tempo de experiência -->
         <div class="form-group">
-          <label>E-mail (login) *</label>
-          <input type="email" id="email" placeholder="seu@email.com" required>
+          <label>Tempo de experiência na profissão *</label>
+          <input type="text" id="funcExperiencia" placeholder="Ex: 3 anos e meio" required>
         </div>
+
+        <!-- Já trabalhou com Home Care? -->
         <div class="form-group">
-          <label>Senha *</label>
-          <input type="password" id="senha" placeholder="********" required>
+          <label>Já trabalhou com Home Care? *</label>
+          <div class="radio-group">
+            <label><input type="radio" name="homecare" value="Sim" checked> Sim</label>
+            <label><input type="radio" name="homecare" value="Não"> Não</label>
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label>Profissão *</label>
-        <select id="profissao" required>
-          <option value="">Selecione...</option>
-          <option value="Enfermeiro(a)">Enfermeiro(a)</option>
-          <option value="Técnico(a) de enfermagem">Técnico(a) de enfermagem</option>
-          <option value="Cuidador(a) de idosos">Cuidador(a) de idosos</option>
-          <option value="Fisioterapeuta">Fisioterapeuta</option>
-          <option value="Nutricionista">Nutricionista</option>
-          <option value="Médico(a)">Médico(a)</option>
-          <option value="Outro">Outro</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Tempo de experiência na profissão *</label>
-        <input type="text" id="experiencia" placeholder="Ex: 3 anos e meio" required>
-      </div>
-      <div class="form-group">
-        <label>Já trabalhou com Home Care? *</label>
-        <div class="radio-group">
-          <label><input type="radio" name="homecare" value="Sim" checked> Sim</label>
-          <label><input type="radio" name="homecare" value="Não"> Não</label>
+
+        <!-- Quanto tempo pode trabalhar? -->
+        <div class="form-group">
+          <label>Quanto tempo pode trabalhar? *</label>
+          <select id="funcDisponibilidadeTempo" required>
+            <option value="">Selecione...</option>
+            <option value="Algumas horas">Algumas horas</option>
+            <option value="Meio período">Meio período</option>
+            <option value="Período integral">Período integral</option>
+            <option value="Plantão">Plantão</option>
+          </select>
         </div>
-      </div>
-      <div class="form-group">
-        <label>Quanto tempo pode trabalhar? *</label>
-        <select id="disponibilidadeTempo" required>
-          <option value="">Selecione...</option>
-          <option value="Algumas horas">Algumas horas</option>
-          <option value="Meio período">Meio período</option>
-          <option value="Período integral">Período integral</option>
-          <option value="Plantão">Plantão</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Quais serviços sabe realizar?</label>
-        <textarea id="servicos" placeholder="Ex: cuidados de higiene, administração de medicamentos..."></textarea>
-      </div>
-      <div class="form-group">
-        <label>Tem disponibilidade para finais de semana? *</label>
-        <div class="radio-group">
-          <label><input type="radio" name="fimSemana" value="Sim" checked> Sim</label>
-          <label><input type="radio" name="fimSemana" value="Não"> Não</label>
+
+        <!-- Quais serviços sabe realizar? -->
+        <div class="form-group">
+          <label>Quais serviços sabe realizar?</label>
+          <textarea id="funcServicos" placeholder="Ex: cuidados de higiene, administração de medicamentos, fisioterapia..."></textarea>
         </div>
+
+        <!-- Disponibilidade para finais de semana? -->
+        <div class="form-group">
+          <label>Tem disponibilidade para finais de semana? *</label>
+          <div class="radio-group">
+            <label><input type="radio" name="fimSemana" value="Sim" checked> Sim</label>
+            <label><input type="radio" name="fimSemana" value="Não"> Não</label>
+          </div>
+        </div>
+
+        <!-- Experiência profissional (texto livre) -->
+        <div class="form-group">
+          <label>Conte brevemente sobre sua experiência profissional *</label>
+          <textarea id="funcExperienciaTexto" placeholder="Descreva sua trajetória, principais habilidades e motivações..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-cadastrar" id="btnCadastrar">
+          <i class="fas fa-user-plus"></i> Cadastrar
+        </button>
+        <div id="cadastroMensagem"></div>
+      </form>
+      <div class="link-login">
+        <a href="login-funcionario.html">← Já tem conta? Faça login</a>
       </div>
-      <div class="form-group">
-        <label>Conte brevemente sobre sua experiência profissional *</label>
-        <textarea id="experienciaTexto" placeholder="Descreva sua trajetória..." required></textarea>
-      </div>
-      <button type="submit" class="btn-cadastrar" id="btnCadastrar"><i class="fas fa-user-plus"></i> Cadastrar</button>
-      <div id="cadastroMensagem"></div>
-    </form>
-    <div class="link-login">
-      <a href="login-funcionario.html">← Já tem conta? Faça login</a>
     </div>
   </div>
-</div>
+</section>
 
 <footer>
-  <p>© 2026 Cuidado Humanizado Batista</p>
+  <div class="container">
+    <p>© 2026 Cuidado Humanizado Batista</p>
+    <p><small>Desenvolvido por Samuel Ciryaco de Andrade</small></p>
+  </div>
 </footer>
 
 <script>
 const API_URL = 'https://backend-cuidado-humanizado-api.onrender.com';
 
-document.getElementById('cadastroForm').addEventListener('submit', async (e) => {
+document.getElementById('cadastroFuncionarioForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const nome = document.getElementById('nome').value.trim();
-  const idade = parseInt(document.getElementById('idade').value);
-  const telefone = document.getElementById('telefone').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const senha = document.getElementById('senha').value.trim();
-  const profissao = document.getElementById('profissao').value;
-  const experiencia = document.getElementById('experiencia').value.trim();
+
+  const nome = document.getElementById('funcNome').value.trim();
+  const idade = parseInt(document.getElementById('funcIdade').value);
+  const telefone = document.getElementById('funcTelefone').value.trim();
+  const email = document.getElementById('funcEmail').value.trim();
+  const senha = document.getElementById('funcSenha').value.trim();
+  const profissao = document.getElementById('funcProfissao').value;
+  const experiencia = document.getElementById('funcExperiencia').value.trim();
   const homecare = document.querySelector('input[name="homecare"]:checked')?.value || '';
-  const disponibilidadeTempo = document.getElementById('disponibilidadeTempo').value;
-  const servicos = document.getElementById('servicos').value.trim();
+  const disponibilidadeTempo = document.getElementById('funcDisponibilidadeTempo').value;
+  const servicos = document.getElementById('funcServicos').value.trim();
   const fimSemana = document.querySelector('input[name="fimSemana"]:checked')?.value || '';
-  const experienciaTexto = document.getElementById('experienciaTexto').value.trim();
+  const experienciaTexto = document.getElementById('funcExperienciaTexto').value.trim();
 
   const msg = document.getElementById('cadastroMensagem');
   const btn = document.getElementById('btnCadastrar');
@@ -198,60 +349,87 @@ document.getElementById('cadastroForm').addEventListener('submit', async (e) => 
   msg.innerHTML = '⏳ Enviando dados...';
 
   try {
-    // 1. Cria usuário
+    // PASSO 1: Criar o usuário
     const userRes = await fetch(`${API_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: nome, email, password: senha, role: 'funcionario' })
+      body: JSON.stringify({
+        name: nome,
+        email: email,
+        password: senha,
+        role: 'funcionario'
+      })
     });
     const userData = await userRes.json();
-    if (!userRes.ok) throw new Error(userData.message || 'Erro ao criar usuário');
 
-    // 2. Cria perfil do funcionário
+    if (!userRes.ok) {
+      msg.className = 'erro';
+      msg.innerHTML = `❌ ${userData.message || userData.error}`;
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
+      return;
+    }
+
+    // PASSO 2: Cadastrar informações do funcionário (rota pública)
     const funcRes = await fetch(`${API_URL}/api/funcionarios/public`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userId: userData.user.id,
         nomeCompleto: nome,
-        idade,
-        telefone,
-        profissao,
-        experiencia,
-        homecare,
-        disponibilidadeTempo,
-        servicos,
-        fimSemana,
-        experienciaTexto,
+        idade: idade,
+        telefone: telefone,
+        profissao: profissao,
+        experiencia: experiencia,
+        homecare: homecare,
+        disponibilidadeTempo: disponibilidadeTempo,
+        servicos: servicos,
+        fimSemana: fimSemana,
+        experienciaTexto: experienciaTexto,
+        // Mantém compatibilidade com campos antigos
         especialidade: profissao,
-        descricao: `${profissao} | ${experiencia}`
+        descricao: `${profissao} | ${experiencia} | ${experienciaTexto.slice(0, 100)}`
       })
     });
     const funcData = await funcRes.json();
-    if (!funcRes.ok) throw new Error(funcData.message || 'Erro ao criar perfil');
 
-    // 3. Login automático
+    if (!funcRes.ok) {
+      msg.className = 'erro';
+      msg.innerHTML = `❌ ${funcData.message || funcData.error}`;
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
+      return;
+    }
+
+    // PASSO 3: Login automático
+    msg.innerHTML = '✅ Cadastro realizado! Redirecionando...';
     const loginRes = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password: senha })
     });
     const loginData = await loginRes.json();
+
     if (loginRes.ok) {
       localStorage.setItem('token', loginData.token);
       localStorage.setItem('user', JSON.stringify(loginData.user));
       msg.className = 'sucesso';
-      msg.innerHTML = '✅ Cadastro e login realizados! Redirecionando...';
-      setTimeout(() => window.location.href = 'dashboard-funcionario.html', 1500);
+      msg.innerHTML = '✅ Cadastro e login realizados com sucesso!';
+      setTimeout(() => {
+        window.location.href = 'dashboard-funcionario.html';
+      }, 1500);
     } else {
       msg.className = 'sucesso';
-      msg.innerHTML = '✅ Cadastro realizado! Faça login para acessar.';
-      setTimeout(() => window.location.href = 'login-funcionario.html', 2000);
+      msg.innerHTML = '✅ Cadastro realizado! Faça login para acessar sua área.';
+      setTimeout(() => {
+        window.location.href = 'login-funcionario.html';
+      }, 2000);
     }
+
   } catch (err) {
-    console.error(err);
+    console.error('Erro:', err);
     msg.className = 'erro';
-    msg.innerHTML = `❌ ${err.message || 'Erro ao cadastrar'}`;
+    msg.innerHTML = '❌ Erro ao conectar com a API. Verifique sua internet.';
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
