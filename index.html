@@ -244,6 +244,13 @@
           <label>Nome completo *</label>
           <input type="text" id="funcNome" placeholder="Seu nome completo" required>
         </div>
+        
+        <!-- NOVO CAMPO CPF -->
+        <div class="form-group">
+          <label>CPF *</label>
+          <input type="text" id="funcCpf" placeholder="000.000.000-00" required>
+        </div>
+
         <div class="form-row">
           <div class="form-group">
             <label>Idade *</label>
@@ -360,6 +367,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
   e.preventDefault();
 
   const nome = document.getElementById('funcNome').value.trim();
+  const cpf = document.getElementById('funcCpf').value.trim();
   const idade = parseInt(document.getElementById('funcIdade').value);
   const telefone = document.getElementById('funcTelefone').value.trim();
   const email = document.getElementById('funcEmail').value.trim();
@@ -375,7 +383,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
   const msg = document.getElementById('cadastroMensagem');
   const btn = document.getElementById('btnCadastrar');
 
-  if (!nome || !idade || !telefone || !email || !senha || !profissao || !experiencia || !disponibilidadeTempo || !experienciaTexto) {
+  if (!nome || !cpf || !idade || !telefone || !email || !senha || !profissao || !experiencia || !disponibilidadeTempo || !experienciaTexto) {
     msg.className = 'erro';
     msg.innerHTML = '⚠️ Preencha todos os campos obrigatórios.';
     return;
@@ -404,13 +412,14 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
       return;
     }
 
-    // 2. Cadastrar perfil do funcionário
+    // 2. Cadastrar perfil do funcionário com CPF
     const funcRes = await fetch(`${API_URL}/api/funcionarios/public`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userId: userData.user.id,
         nomeCompleto: nome,
+        cpf: cpf,                     // CPF enviado ao backend
         idade,
         telefone,
         profissao,
@@ -433,7 +442,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
       return;
     }
 
-    // 3. Login automático (opcional, para já deixar logado)
+    // 3. Login automático
     try {
       const loginRes = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
@@ -446,11 +455,10 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
         localStorage.setItem('user', JSON.stringify(loginData.user));
       }
     } catch (loginErr) {
-      // Ignora erro de login automático – o usuário pode logar manualmente depois
       console.warn('Login automático não foi possível:', loginErr);
     }
 
-    // 🔥 SUCESSO: esconde formulário e mostra mensagem de boas-vindas
+    // Sucesso: esconde formulário e mostra boas-vindas
     document.getElementById('formArea').style.display = 'none';
     document.getElementById('welcomeArea').style.display = 'block';
 
