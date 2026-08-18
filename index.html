@@ -403,8 +403,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
         name: nome, 
         email, 
         password: senha, 
-        role: 'funcionario',
-        cpf: cpf  // Envia o CPF também no cadastro do usuário
+        role: 'funcionario'
       })
     });
     const userData = await userRes.json();
@@ -416,24 +415,24 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
       return;
     }
 
-    // 2. Cadastrar perfil do funcionário com CPF - USANDO O ENDPOINT CORRETO
-    const funcRes = await fetch(`${API_URL}/api/funcionarios`, {  // <--- CORRIGIDO: removido "/public"
+    // 2. Cadastrar perfil do funcionário - USANDO O ENDPOINT PÚBLICO
+    const funcRes = await fetch(`${API_URL}/api/funcionarios/public`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userId: userData.user.id,
         nomeCompleto: nome,
-        email: email,  // <--- ADICIONADO: email no perfil
         cpf: cpf,
         idade,
         telefone,
-        profissao,
-        experiencia,
-        homecare,
-        disponibilidadeTempo,
-        servicos,
-        fimSemana,
-        experienciaTexto,
+        email: email,
+        profissao: profissao,
+        experiencia: experiencia,
+        homecare: homecare,
+        disponibilidadeTempo: disponibilidadeTempo,
+        servicos: servicos,
+        fimSemana: fimSemana,
+        experienciaTexto: experienciaTexto,
         especialidade: profissao,
         descricao: `${profissao} | ${experiencia}`
       })
