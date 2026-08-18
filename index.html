@@ -245,7 +245,7 @@
           <input type="text" id="funcNome" placeholder="Seu nome completo" required>
         </div>
         
-        <!-- NOVO CAMPO CPF -->
+        <!-- CAMPO CPF -->
         <div class="form-group">
           <label>CPF *</label>
           <input type="text" id="funcCpf" placeholder="000.000.000-00" required>
@@ -400,7 +400,11 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name: nome, email, password: senha, role: 'funcionario'
+        name: nome, 
+        email, 
+        password: senha, 
+        role: 'funcionario',
+        cpf: cpf  // Envia o CPF também no cadastro do usuário
       })
     });
     const userData = await userRes.json();
@@ -412,14 +416,15 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
       return;
     }
 
-    // 2. Cadastrar perfil do funcionário com CPF
-    const funcRes = await fetch(`${API_URL}/api/funcionarios/public`, {
+    // 2. Cadastrar perfil do funcionário com CPF - USANDO O ENDPOINT CORRETO
+    const funcRes = await fetch(`${API_URL}/api/funcionarios`, {  // <--- CORRIGIDO: removido "/public"
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userId: userData.user.id,
         nomeCompleto: nome,
-        cpf: cpf,                     // CPF enviado ao backend
+        email: email,  // <--- ADICIONADO: email no perfil
+        cpf: cpf,
         idade,
         telefone,
         profissao,
