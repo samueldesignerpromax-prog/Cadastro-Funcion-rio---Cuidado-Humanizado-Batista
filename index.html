@@ -415,51 +415,97 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
       return;
     }
 
-    // 2. Cadastrar perfil do funcionário - USANDO O ENDPOINT PÚBLICO
+    // 2. Cadastrar perfil do funcionário - APENAS COM OS CAMPOS QUE O BACKEND ACEITA
+    const funcPayload = {
+      userId: userData.user.id,
+      nomeCompleto: nome,
+      idade: idade,
+      telefone: telefone,
+      descricao: `${profissao} | ${experiencia}`,
+      especialidade: profissao
+    };
+
+    console.log('Enviando funcionário (básico):', funcPayload);
+
     const funcRes = await fetch(`${API_URL}/api/funcionarios/public`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId: userData.user.id,
-        nomeCompleto: nome,
-        cpf: cpf,
-        idade,
-        telefone,
-        email: email,
-        profissao: profissao,
-        experiencia: experiencia,
-        homecare: homecare,
-        disponibilidadeTempo: disponibilidadeTempo,
-        servicos: servicos,
-        fimSemana: fimSemana,
-        experienciaTexto: experienciaTexto,
-        especialidade: profissao,
-        descricao: `${profissao} | ${experiencia}`
-      })
+      body: JSON.stringify(funcPayload)
     });
     const funcData = await funcRes.json();
+    
+    console.log('Resposta funcionário:', funcData);
+
     if (!funcRes.ok) {
       msg.className = 'erro';
-      msg.innerHTML = `❌ ${funcData.message || funcData.error}`;
+      msg.innerHTML = `❌ ${funcData.message || funcData.error || 'Erro ao cadastrar funcionário'}`;
       btn.disabled = false;
       btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
       return;
     }
 
-    // 3. Login automático
-    try {
-      const loginRes = await fetch(`${API_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password: senha })
+    // 3. ATUALIZAR o perfil com CPF e disponibilidade usando o token
+    // Primeiro, fazer login para obter o token
+    const loginRes = await fetch(`${API_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: senha })
+    });
+    
+    if (loginRes.ok) {
+      const loginData = await loginRes.json();
+      const token = loginData.token;
+      const userId = loginData.user.id;
+      
+      console.log('Login OK, token obtido');
+      
+      // Agora atualizar o perfil com CPF e disponibilidade
+      const updatePayload = {
+        cpf: cpf,
+        disponibilidadeTempo: disponibilidadeTempo,
+        homecare: homecare,
+        servicos: servicos,
+        fimSemana: fimSemana,
+        experiencia: experiencia,
+        experienciaTexto: experienciaTexto,
+        profissao: profissao
+      };
+      
+      console.log('Atualizando perfil com:', updatePayload);
+      
+      // Tentar atualizar via PUT
+      const updateRes = await fetch(`${API_URL}/api/funcionarios/${funcData._id || funcData.id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(updatePayload)
       });
-      if (loginRes.ok) {
-        const loginData = await loginRes.json();
-        localStorage.setItem('token', loginData.token);
-        localStorage.setItem('user', JSON.stringify(loginData.user));
+      
+      const updateData = await updateRes.json();
+      console.log('Resposta atualização:', updateData);
+      
+      if (!updateRes.ok) {
+        // Se o PUT falhar, tentar PATCH
+        console.log('PUT falhou, tentando PATCH...');
+        const patchRes = await fetch(`${API_URL}/api/funcionarios/${funcData._id || funcData.id}`, {
+          method: 'PATCH',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(updatePayload)
+        });
+        const patchData = await patchRes.json();
+        console.log('Resposta PATCH:', patchData);
       }
-    } catch (loginErr) {
-      console.warn('Login automático não foi possível:', loginErr);
+      
+      // Salvar token para login automático
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(loginData.user));
+    } else {
+      console.warn('Não foi possível fazer login para atualizar perfil');
     }
 
     // Sucesso: esconde formulário e mostra boas-vindas
@@ -467,7 +513,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
     document.getElementById('welcomeArea').style.display = 'block';
 
   } catch (err) {
-    console.error('Erro:', err);
+    console.error('Erro detalhado:', err);
     msg.className = 'erro';
     msg.innerHTML = '❌ Erro ao conectar com a API. Verifique sua internet.';
   } finally {
