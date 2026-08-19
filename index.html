@@ -416,18 +416,27 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
       return;
     }
 
-    // 2. Cadastrar perfil do funcionário - APENAS COM OS CAMPOS ESSENCIAIS
-    // O backend pode não aceitar todos os campos de uma vez
+    // 2. Cadastrar perfil do funcionário com todos os campos de uma vez
+    // Enviando todos os campos que o backend pode aceitar
     const funcPayload = {
       userId: userData.user.id,
       nomeCompleto: nome,
+      cpf: cpf,
       idade: idade,
       telefone: telefone,
+      email: email,
+      profissao: profissao,
+      experiencia: experiencia,
+      homecare: homecare,
+      disponibilidadeTempo: disponibilidadeTempo,
+      servicos: servicos,
+      fimSemana: fimSemana,
+      experienciaTexto: experienciaTexto,
       especialidade: profissao,
       descricao: `${profissao} | ${experiencia}`
     };
 
-    console.log('Enviando funcionário (básico):', funcPayload);
+    console.log('Enviando funcionário completo:', funcPayload);
 
     const funcRes = await fetch(`${API_URL}/api/funcionarios/public`, {
       method: 'POST',
@@ -438,62 +447,93 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
     
     console.log('Resposta funcionário:', funcData);
 
+    // Verifica se a resposta é válida
     if (!funcRes.ok) {
-      msg.className = 'erro';
-      msg.innerHTML = `❌ ${funcData.message || funcData.error || 'Erro ao cadastrar funcionário'}`;
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
-      return;
-    }
-
-    // 3. Tenta fazer login para atualizar os campos extras
-    try {
-      const loginRes = await fetch(`${API_URL}/api/auth/login`, {
+      // Se o backend rejeitou, tenta enviar apenas os campos essenciais
+      console.log('Tentando cadastro com campos essenciais...');
+      
+      const funcPayloadEssencial = {
+        userId: userData.user.id,
+        nomeCompleto: nome,
+        idade: idade,
+        telefone: telefone,
+        especialidade: profissao,
+        descricao: `${profissao} | ${experiencia}`
+      };
+      
+      const funcRes2 = await fetch(`${API_URL}/api/funcionarios/public`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password: senha })
+        body: JSON.stringify(funcPayloadEssencial)
       });
+      const funcData2 = await funcRes2.json();
       
-      if (loginRes.ok) {
-        const loginData = await loginRes.json();
-        const token = loginData.token;
-        
-        // Tenta atualizar com os campos extras via PATCH
-        const updatePayload = {
-          cpf: cpf,
-          disponibilidadeTempo: disponibilidadeTempo,
-          homecare: homecare,
-          servicos: servicos,
-          fimSemana: fimSemana,
-          experiencia: experiencia,
-          experienciaTexto: experienciaTexto,
-          profissao: profissao
-        };
-        
-        console.log('Tentando atualizar perfil com:', updatePayload);
-        
-        const funcionarioId = funcData._id || funcData.id;
-        if (funcionarioId) {
-          const updateRes = await fetch(`${API_URL}/api/funcionarios/${funcionarioId}`, {
-            method: 'PATCH',
-            headers: { 
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(updatePayload)
-          });
-          
-          const updateData = await updateRes.json();
-          console.log('Resposta atualização:', updateData);
-        }
-        
-        // Salvar token
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(loginData.user));
+      if (!funcRes2.ok) {
+        msg.className = 'erro';
+        msg.innerHTML = `❌ ${funcData2.message || funcData2.error || 'Erro ao cadastrar funcionário'}`;
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
+        return;
       }
-    } catch (updateErr) {
-      console.warn('Erro ao atualizar campos extras:', updateErr);
-      // Não falha o cadastro se a atualização falhar
+      
+      // Tenta atualizar com os campos extras via login
+      try {
+        const loginRes = await fetch(`${API_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password: senha })
+        });
+        
+        if (loginRes.ok) {
+          const loginData = await loginRes.json();
+          const token = loginData.token;
+          const funcionarioId = funcData2._id || funcData2.id;
+          
+          if (funcionarioId) {
+            const updatePayload = {
+              cpf: cpf,
+              disponibilidadeTempo: disponibilidadeTempo,
+              homecare: homecare,
+              servicos: servicos,
+              fimSemana: fimSemana,
+              experiencia: experiencia,
+              experienciaTexto: experienciaTexto,
+              profissao: profissao
+            };
+            
+            await fetch(`${API_URL}/api/funcionarios/${funcionarioId}`, {
+              method: 'PATCH',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify(updatePayload)
+            });
+          }
+          
+          localStorage.setItem('token', token);
+          localStorage.setItem('user', JSON.stringify(loginData.user));
+        }
+      } catch (updateErr) {
+        console.warn('Erro ao atualizar campos extras:', updateErr);
+      }
+    } else {
+      // Cadastro com todos os campos deu certo
+      // Tenta fazer login automático
+      try {
+        const loginRes = await fetch(`${API_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password: senha })
+        });
+        if (loginRes.ok) {
+          const loginData = await loginRes.json();
+          localStorage.setItem('token', loginData.token);
+          localStorage.setItem('user', JSON.stringify(loginData.user));
+        }
+      } catch (loginErr) {
+        console.warn('Login automático não foi possível:', loginErr);
+      }
     }
 
     // Sucesso: esconde formulário e mostra boas-vindas
@@ -503,7 +543,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
   } catch (err) {
     console.error('Erro detalhado:', err);
     msg.className = 'erro';
-    msg.innerHTML = '❌ Erro ao conectar com a API. Verifique sua internet.';
+    msg.innerHTML = `❌ Erro: ${err.message || 'Erro ao conectar com a API'}`;
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
